@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"html"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -50,18 +49,18 @@ type QueryResult struct {
 
 // Expose sid to save in admin settings
 func (client *Client) GetSid() (sid string) {
-        return client.sessionID
+	return client.sessionID
 }
 
-//Expose Loc to save in admin settings
+// Expose Loc to save in admin settings
 func (client *Client) GetLoc() (loc string) {
 	return client.instanceURL
 }
 
 // Set SID and Loc as a means to log in without LoginPassword
 func (client *Client) SetSidLoc(sid string, loc string) {
-        client.sessionID = sid
-        client.instanceURL = loc
+	client.sessionID = sid
+	client.instanceURL = loc
 }
 
 // Query runs an SOQL query. q could either be the SOQL string or the nextRecordsURL.
@@ -191,7 +190,7 @@ func (client *Client) LoginPassword(username, password, token string) error {
 		return theError
 	}
 
-	respData, err := ioutil.ReadAll(resp.Body)
+	respData, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		log.Println(logPrefix, "error occurred reading response data,", err)
@@ -251,7 +250,7 @@ func (client *Client) httpRequest(method, url string, body io.Reader) ([]byte, e
 		return nil, theError
 	}
 
-	return ioutil.ReadAll(resp.Body)
+	return io.ReadAll(resp.Body)
 }
 
 // makeURL generates a REST API URL based on baseURL, APIVersion of the client.
@@ -332,7 +331,7 @@ func parseHost(input string) string {
 	return "Failed to parse URL input"
 }
 
-//Get the List of all available objects and their metadata for your organization's data
+// Get the List of all available objects and their metadata for your organization's data
 func (client *Client) DescribeGlobal() (*SObjectMeta, error) {
 	apiPath := fmt.Sprintf("/services/data/v%s/sobjects", client.apiVersion)
 	baseURL := strings.TrimRight(client.baseURL, "/")
@@ -351,7 +350,7 @@ func (client *Client) DescribeGlobal() (*SObjectMeta, error) {
 
 	var meta SObjectMeta
 
-	respData, err := ioutil.ReadAll(resp.Body)
+	respData, err := io.ReadAll(resp.Body)
 	log.Println(logPrefix, fmt.Sprintf("status code %d", resp.StatusCode))
 	if err != nil {
 		log.Println(logPrefix, "error while reading all body")
